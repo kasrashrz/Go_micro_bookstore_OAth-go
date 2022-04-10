@@ -6,6 +6,7 @@ import (
 	"github.com/Go_micro_bookstore_OAth-go/oath/errors"
 	"github.com/mercadolibre/golang-restclient/rest"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -39,15 +40,58 @@ func IsPublic(request *http.Request) bool {
 	return request.Header.Get(headerXPublic) == "true"
 }
 
+func GetCallerId(request *http.Request) int64 {
+	if request == nil {
+		return 0
+	}
+
+	callerId, err := strconv.ParseInt(request.Header.Get(headerXCallerId), 10, 64)
+	if err != nil {
+		return 0
+	}
+	return callerId
+}
+
+func GetClientId(request *http.Request) int64 {
+	if request == nil {
+		return 0
+	}
+
+	clientId, err := strconv.ParseInt(request.Header.Get(headerXClientId), 10, 64)
+	if err != nil {
+		return 0
+	}
+	return clientId
+}
+
 func AuthenticateRequest(request *http.Request) *errors.RestErr {
 	if request == nil {
 		return nil
 	}
-	accessToken := request.URL.Query().Get(paramAccessToken)
-	if accessToken == "" {
+
+	ClearRequest(request)
+	accessTokenId := request.URL.Query().Get(paramAccessToken)
+	if accessTokenId == "" {
 		return nil
 	}
 	return nil
+
+	at, err := GetAccessToken(accessTokenId)
+	if err != nil {
+		return err
+	}
+	request.Header.Add(headerXClientId, fmt.Sprintf("%v", at.ClientId))
+	request.Header.Add(headerXCallerId, fmt.Sprintf("%v", at.UserId))
+
+	return nil
+}
+
+func ClearRequest(request *http.Request) {
+	if request == nil {
+		return
+	}
+	request.Header.Del(headerXClientId)
+	request.Header.Del(headerXCallerId)
 }
 
 func GetAccessToken(accessTokenId string) (*accessToken, *errors.RestErr) {
