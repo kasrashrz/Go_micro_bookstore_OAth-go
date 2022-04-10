@@ -3,7 +3,7 @@ package oath
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kasrashrz/bookstore_project_Oath-go/oath/errors"
+	"github.com/kasrashrz/Go_micro_bookstore_OAth-go/oath/errors"
 	"github.com/mercadolibre/golang-restclient/rest"
 	"net/http"
 	"strconv"
