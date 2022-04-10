@@ -1,3 +1,3 @@
-module github.com/kasrashrz/bookstore_project_Oath
+module github.com/kasrashrz/bookstore_project_Oath-go
 
 go 1.15
